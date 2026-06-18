@@ -59,8 +59,6 @@ export default function Home() {
   const [selectedIpd, setSelectedIpd] = useState<string>("SP3000");
   const [buyOpd, setBuyOpd] = useState<boolean>(false);
   const [selectedOpd, setSelectedOpd] = useState<string>("OPD800");
-  const [hadCovid, setHadCovid] = useState<string>("no");
-  const [covidMonths, setCovidMonths] = useState<number>(7);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(5);
   const [activeTableTab, setActiveTableTab] = useState<"ipd" | "opd">("ipd");
@@ -153,21 +151,20 @@ export default function Home() {
   const opdPremium = buyOpd ? (OPD_PREMIUMS[ageRange]?.[selectedOpd] || 0) : 0;
   const totalPremium = ipdPremium + opdPremium;
 
-  const isEligible = hadCovid === "no" || covidMonths >= 6;
   const currentIpdPlan = PLANS_DETAILS.find(p => p.code === selectedIpd) || PLANS_DETAILS[2];
   const currentOpdPlan = OPD_DETAILS.find(o => o.code === selectedOpd) || OPD_DETAILS[0];
 
   return (
-    <div className="flex min-h-screen bg-slate-50 text-slate-800 antialiased selection:bg-primary selection:text-white overflow-x-hidden w-full">
+    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-800 antialiased selection:bg-primary selection:text-white overflow-x-hidden w-full">
       {/* Main Content Area */}
-      <div className="flex flex-col flex-1 min-h-screen print:ml-0">
+      <div className="flex flex-col flex-1 min-h-screen print:ml-0 w-full max-w-full">
         {/* Premium Integrated Banner (รวมโลโก้และ Simply Healthy ใว้ในแถวเดียวกัน) */}
-        <section className="relative overflow-hidden bg-gradient-to-r from-brand-dark to-[#00beff] text-white py-6 px-8 border-b border-white/10 shadow-lg print:hidden">
+        <section className="w-full min-w-0 relative overflow-hidden bg-gradient-to-r from-brand-dark to-[#00beff] text-white py-6 px-4 sm:px-8 lg:px-16 xl:px-20 border-b border-white/10 shadow-lg print:hidden">
           {/* Decorative background glows */}
           <div className="absolute -top-24 -left-20 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-24 -right-20 w-80 h-80 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center md:justify-between gap-4 relative z-10">
+          <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center md:justify-between gap-4 relative z-10">
             {/* Logo & Product Name Group */}
             <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left w-full md:w-auto">
               {/* Brand Logo (White version for dark background) */}
@@ -207,7 +204,7 @@ export default function Home() {
             </div>
 
             {/* Right Side Info badge */}
-            <div className="shrink-0 w-full md:w-auto">
+            <div className="shrink-0 w-auto">
               <div className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-2xl flex flex-col items-center md:items-end shadow-sm">
                 <span className="text-[9px] text-white/70 font-bold uppercase tracking-wider">แคมเปญพิเศษ</span>
                 <span className="text-base font-black text-white mt-0.5">เบี้ยประกันภัยเริ่มต้นหลักพัน</span>
@@ -217,7 +214,7 @@ export default function Home() {
         </section>
 
         {/* ภาพประกอบแบนเนอร์แบบ Full Width */}
-        <div className="max-w-[1600px] mx-auto px-6 pt-6 print:hidden">
+        <div className="w-full min-w-0 max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-16 xl:px-20 pt-6 print:hidden">
           <div className="relative w-full rounded-3xl overflow-hidden shadow-md border border-slate-200/60 group hover:shadow-lg transition-all duration-300">
             <img
               src="/images/simply_healthy_banner.jpg"
@@ -228,65 +225,65 @@ export default function Home() {
         </div>
 
         {/* Product Introduction Section */}
-        <section className="pt-4 pb-8 px-6 max-w-[1600px] mx-auto grid lg:grid-cols-12 gap-8 items-stretch print:hidden">
+        <section className="w-full min-w-0 pt-4 pb-8 px-4 sm:px-6 lg:px-16 xl:px-20 max-w-[1200px] mx-auto grid lg:grid-cols-12 gap-8 items-stretch print:hidden">
           {/* Left Side: Overview & Description */}
-          <div className="lg:col-span-8 bg-white p-8 rounded-3xl border border-slate-200/60 shadow-sm space-y-6 flex flex-col justify-between">
+          <div className="lg:col-span-8 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/60 shadow-sm space-y-6 flex flex-col justify-between">
             <div>
-              <h3 className="text-xl font-bold text-brand-dark border-l-4 border-primary pl-3 mb-4">แผนประกันผู้ป่วยใน Simply Healthy คืออะไร?</h3>
-              <p className="text-sm text-slate-650 leading-relaxed font-medium mb-4">
+              <h3 className="text-lg sm:text-xl font-bold text-brand-dark border-l-4 border-primary pl-3 mb-4">แผนประกันผู้ป่วยใน Simply Healthy คืออะไร?</h3>
+              <p className="text-xs sm:text-sm text-slate-650 leading-relaxed font-medium mb-4">
                 ความคุ้มครองสำหรับผู้ป่วยในโดยเริ่มต้นที่ราคาที่เข้าถึงได้โดยมีความคุ้มครองที่สูงตามที่ซื้อ แบบผู้ป่วยในที่มีค่าห้อง ค่าการพยาบาล ครบถ้วน ถ้ามีการแอตมิทเข้าโรงพยาบาลแผนสุขภาพดีเป็นแผนเริ่มต้นขั้นพื้นฐานที่ครอบคลุมผู้ป่วยในช่วยให้คุณจ่ายค่ารักษาและมีเบี้ยประกันภัยต่ำซึ่งเหมาะสำหรับผู้ที่ต้องการความคุ้มครองในระดับปานกลางและเบี้ยประกันภัยที่ไม่สูงมาก
               </p>
-              <p className="text-sm text-slate-650 leading-relaxed font-medium">
+              <p className="text-xs sm:text-sm text-slate-650 leading-relaxed font-medium">
                 แผนนี้เป็นแผนเริ่มต้นของบริษัทไทยประกันสุขภาพโดยครอบคลุมการรักษาพยาบาลแบบผู้ป่วยใน ค่าห้อง ค่ารักษาพยาบาล ค่าผ่าตัด โดยสามารถซื้อแผนผู้ป่วยนอก (OPD) เพิ่มได้ตามต้องการ
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-3 gap-4 pt-6 border-t border-slate-100 mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-slate-100 mt-6">
               <div className="text-center p-4 bg-slate-50 rounded-2xl">
-                <span className="block text-2xl font-black text-primary">15 วัน</span>
-                <span className="text-[11px] text-slate-400 font-semibold">อายุที่เริ่มรับประกัน</span>
+                <span className="block text-xl sm:text-2xl font-black text-primary">15 วัน</span>
+                <span className="text-[10px] sm:text-[11px] text-slate-400 font-semibold">อายุที่เริ่มรับประกัน</span>
               </div>
               <div className="text-center p-4 bg-slate-50 rounded-2xl">
-                <span className="block text-2xl font-black text-primary">6 แผน</span>
-                <span className="text-[11px] text-slate-400 font-semibold">แผน IPD เลือกได้</span>
+                <span className="block text-xl sm:text-2xl font-black text-primary">6 แผน</span>
+                <span className="text-[10px] sm:text-[11px] text-slate-400 font-semibold">แผน IPD เลือกได้</span>
               </div>
               <div className="text-center p-4 bg-slate-50 rounded-2xl">
-                <span className="block text-2xl font-black text-primary">10%</span>
-                <span className="text-[11px] text-slate-400 font-semibold">ส่วนลดประวัติดีไม่มีเคลม</span>
+                <span className="block text-xl sm:text-2xl font-black text-primary">10%</span>
+                <span className="text-[10px] sm:text-[11px] text-slate-400 font-semibold">ส่วนลดประวัติดีไม่มีเคลม</span>
               </div>
             </div>
           </div>
 
           {/* Right Side: Quick FAQ info block */}
-          <div className="lg:col-span-4 bg-white p-8 rounded-3xl border border-slate-200/60 shadow-sm space-y-6 flex flex-col justify-between">
+          <div className="lg:col-span-4 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/60 shadow-sm space-y-6 flex flex-col justify-between">
             <div>
               <h4 className="font-bold text-slate-900 border-l-4 border-primary pl-3 mb-6">เงื่อนไขเด่นและระยะเวลารอคอย</h4>
-              <div className="space-y-4 text-xs text-slate-600">
+              <div className="space-y-4 text-[11px] sm:text-xs text-slate-600">
                 <div className="flex gap-3 items-start bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm">
                   <span className="text-primary text-xl">⏱️</span>
                   <div>
-                    <span className="font-bold block text-slate-800 text-sm mb-0.5">ระยะเวลารอคอย 30 วัน</span>
+                    <span className="font-bold block text-slate-800 text-xs sm:text-sm mb-0.5">ระยะเวลารอคอย 30 วัน</span>
                     สำหรับการเจ็บป่วยทั่วไปทุกชนิด
                   </div>
                 </div>
                 <div className="flex gap-3 items-start bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm">
                   <span className="text-primary text-xl">🛡️</span>
                   <div>
-                    <span className="font-bold block text-slate-800 text-sm mb-0.5">ระยะเวลารอคอย 120 วัน</span>
+                    <span className="font-bold block text-slate-800 text-xs sm:text-sm mb-0.5">ระยะเวลารอคอย 120 วัน</span>
                     สำหรับ 8 โรคเฉพาะกลุ่ม เช่น ไส้เลื่อน, มะเร็ง, นิ่ว
                   </div>
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-r from-blue-50 to-primary/5 p-4 rounded-2xl border border-blue-100 text-[11px] text-slate-500 font-medium leading-relaxed">
+            <div className="bg-gradient-to-r from-blue-50 to-primary/5 p-4 rounded-2xl border border-blue-100 text-[10px] sm:text-[11px] text-slate-500 font-medium leading-relaxed">
               💡 สมัครได้ตั้งแต่อายุ 15 วัน - 60 ปี (ต่ออายุต่อเนื่องได้ยาวนานสูงสุดถึง 85 ปี)
             </div>
           </div>
         </section>
 
         {/* Calculator & Coverage Summary Section */}
-        <section className="bg-slate-100/50 border-y border-slate-200/60 py-8 px-6 print:hidden">
-          <div className="max-w-[1600px] mx-auto">
+        <section className="w-full min-w-0 bg-slate-100/50 border-y border-slate-200/60 py-8 px-4 sm:px-6 lg:px-16 xl:px-20 print:hidden">
+          <div className="max-w-[1200px] mx-auto">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold text-slate-900 mb-2">คำนวณเบี้ยประกันและแผนความคุ้มครองของคุณ</h3>
               <p className="text-sm text-slate-500 font-medium">ระบุอายุและเลือกความคุ้มครองที่เหมาะสมเพื่อคำนวณเบี้ยประกันแบบเรียลไทม์</p>
@@ -294,8 +291,8 @@ export default function Home() {
 
             <div className="grid lg:grid-cols-12 gap-8 items-start">
               {/* Left Column: Calculator Card */}
-              <div className="lg:col-span-4 bg-white text-slate-850 p-8 rounded-3xl shadow-lg border border-slate-200/60">
-                <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-slate-900 border-b border-slate-100 pb-4">
+              <div className="lg:col-span-4 bg-white text-slate-850 p-6 sm:p-8 rounded-3xl shadow-lg border border-slate-200/60">
+                <h3 className="text-base sm:text-lg font-bold mb-6 flex items-center gap-2 text-slate-900 border-b border-slate-100 pb-4">
                   <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
@@ -305,7 +302,7 @@ export default function Home() {
                 <div className="space-y-6">
                   {/* Age Selector */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                    <label className="block text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                       ระบุอายุของคุณ: <span className="text-primary font-bold">{age === "" ? "ระบุอายุ" : age === 0 ? "15 วัน" : `${age} ปี`}</span>
                     </label>
                     <div className="flex items-center gap-4">
@@ -333,73 +330,27 @@ export default function Home() {
                       </div>
                     </div>
                     {age !== "" && age > 70 && (
-                      <p className="text-[11px] text-amber-600 mt-2 font-medium">
+                      <p className="text-[10px] sm:text-[11px] text-amber-600 mt-2 font-medium">
                         *สิทธิ์สำหรับต่ออายุกรมธรรม์เดิมเท่านั้น (Renewal Only)
                       </p>
                     )}
                   </div>
 
-                  {/* Covid Rule Check */}
-                  <div className="bg-slate-50/70 p-4 rounded-2xl border border-slate-100">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">ประวัติการเป็น COVID-19</label>
-                    <div className="grid grid-cols-2 gap-3 mb-2">
-                      <button
-                        onClick={() => setHadCovid("no")}
-                        className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all ${hadCovid === "no"
-                            ? "bg-primary text-white border-primary shadow-sm"
-                            : "bg-white border-slate-200 text-slate-600 hover:border-primary/50"
-                          }`}
-                      >
-                        ไม่เคยเป็น
-                      </button>
-                      <button
-                        onClick={() => setHadCovid("yes")}
-                        className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all ${hadCovid === "yes"
-                            ? "bg-primary text-white border-primary shadow-sm"
-                            : "bg-white border-slate-200 text-slate-600 hover:border-primary/50"
-                          }`}
-                      >
-                        เคยเป็นมาก่อน
-                      </button>
-                    </div>
-                    {hadCovid === "yes" && (
-                      <div className="mt-3">
-                        <label className="block text-[11px] font-medium text-slate-400 mb-1">รักษาหายดีแล้วกี่เดือน?</label>
-                        <div className="flex items-center gap-3">
-                          <select
-                            value={covidMonths}
-                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCovidMonths(parseInt(e.target.value))}
-                            className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 outline-none focus:border-primary"
-                          >
-                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
-                              <option key={m} value={m}>{m} เดือน</option>
-                            ))}
-                          </select>
-                          {covidMonths < 6 ? (
-                            <span className="text-[11px] text-red-500 font-semibold">❌ ยังสมัครไม่ได้ (ต้องครบ 6 เดือน)</span>
-                          ) : (
-                            <span className="text-[11px] text-emerald-600 font-semibold">✅ ผ่านเกณฑ์ (ครบ 6 เดือนแล้ว)</span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
                   {/* IPD Plan Grid */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5">เลือกแผนหลัก (IPD Plan)</label>
+                    <label className="block text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5">เลือกแผนหลัก (IPD Plan)</label>
                     <div className="grid grid-cols-3 gap-2">
                       {PLANS_DETAILS.map((plan) => (
                         <button
                           key={plan.code}
                           onClick={() => setSelectedIpd(plan.code)}
-                          className={`py-2 px-1 text-xs font-bold rounded-xl border text-center transition-all ${selectedIpd === plan.code
+                          className={`py-2 px-1 text-[10px] sm:text-xs font-bold rounded-xl border text-center transition-all ${selectedIpd === plan.code
                               ? "bg-primary border-primary text-white shadow-md shadow-primary/20"
                               : "bg-white border-slate-200 text-slate-700 hover:border-primary/55 hover:text-primary"
                             }`}
                         >
                           {plan.name}
-                          <span className="block text-[9px] text-slate-500 font-normal mt-0.5">
+                          <span className="block text-[8px] sm:text-[9px] text-slate-500 font-normal mt-0.5">
                             {/* @ts-expect-error - ageRange indexing */}
                             {(IPD_PREMIUMS[ageRange]?.[plan.code] || 0).toLocaleString()} บ.
                           </span>
@@ -412,8 +363,8 @@ export default function Home() {
                   <div className="pt-3 border-t border-slate-100">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-slate-800">ซื้อแผนผู้ป่วยนอก (OPD) เสริม</span>
-                        <span className="bg-emerald-500/10 text-emerald-600 text-[9px] font-bold px-1.5 py-0.5 rounded">
+                        <span className="text-xs sm:text-sm font-semibold text-slate-800">ซื้อแผนผู้ป่วยนอก (OPD) เสริม</span>
+                        <span className="bg-emerald-500/10 text-emerald-600 text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded">
                           Add-on
                         </span>
                       </div>
@@ -435,13 +386,13 @@ export default function Home() {
                           <button
                             key={opd.code}
                             onClick={() => setSelectedOpd(opd.code)}
-                            className={`py-2 px-1 text-xs font-bold rounded-xl border text-center transition-all ${selectedOpd === opd.code
+                            className={`py-2 px-1 text-[10px] sm:text-xs font-bold rounded-xl border text-center transition-all ${selectedOpd === opd.code
                                 ? "bg-primary border-primary text-white"
                                 : "bg-white border-slate-200 text-slate-700 hover:border-primary/55 hover:text-primary"
                               }`}
                           >
                             {opd.name}
-                            <span className="block text-[9px] text-slate-500 font-normal mt-0.5">
+                            <span className="block text-[8px] sm:text-[9px] text-slate-500 font-normal mt-0.5">
                               {/* @ts-expect-error - ageRange indexing */}
                               {(OPD_PREMIUMS[ageRange]?.[opd.code] || 0).toLocaleString()} บ.
                             </span>
@@ -455,19 +406,19 @@ export default function Home() {
 
               {/* Right Column: Dynamic Plan Summary Card & Buy Button */}
               <div className="lg:col-span-8 space-y-6">
-                <div className="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-lg space-y-6 animate-fadeIn">
-                  <h4 className="text-base font-bold text-brand-dark flex items-center gap-2 border-b border-slate-200/65 pb-3">
+                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-lg space-y-6 animate-fadeIn">
+                  <h4 className="text-sm sm:text-base font-bold text-brand-dark flex items-center gap-2 border-b border-slate-200/65 pb-3">
                     <span className="text-lg">🛡️</span>
                     สรุปความคุ้มครองหลัก: แผน {selectedIpd}
                   </h4>
 
-                  <div className="space-y-4 text-sm text-slate-650 font-medium">
+                  <div className="space-y-4 text-xs sm:text-sm text-slate-650 font-medium">
                     {/* วงเงินสูงสุด */}
-                    <div className="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm">
-                      <span className="text-slate-500 font-semibold flex items-center gap-1.5 text-sm">
-                        💰 วงเงินสูงสุดต่อการเข้าพักรักษาตัว ครั้งใดครั้งหนึ่ง:
+                    <div className="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm gap-2">
+                      <span className="text-slate-500 font-semibold flex items-center gap-1.5 text-xs sm:text-sm">
+                        💰 วงเงินสูงสุดต่อครั้ง:
                       </span>
-                      <span className="font-extrabold text-primary text-xl">
+                      <span className="font-extrabold text-primary text-lg sm:text-xl shrink-0">
                         {currentIpdPlan.limit.toLocaleString()} บาท
                       </span>
                     </div>
@@ -476,106 +427,106 @@ export default function Home() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* หมวด 1 ค่าห้อง */}
                       <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 shadow-sm space-y-1.5">
-                        <span className="text-slate-400 font-bold block text-[11px] uppercase tracking-wider">🛌 ค่าห้องและค่าอาหาร (หมวด 1)</span>
-                        <span className="font-extrabold text-slate-800 block text-sm">
+                        <span className="text-slate-400 font-bold block text-[10px] sm:text-[11px] uppercase tracking-wider">🛌 ค่าห้องและค่าอาหาร (หมวด 1)</span>
+                        <span className="font-extrabold text-slate-800 block text-xs sm:text-sm">
                           {currentIpdPlan.room.toLocaleString()} บ./วัน
                         </span>
-                        <span className="text-[10px] text-slate-450 block">สูงสุดไม่เกิน 60 วันต่อครั้ง</span>
+                        <span className="text-[9px] sm:text-[10px] text-slate-450 block">สูงสุดไม่เกิน 60 วันต่อครั้ง</span>
                       </div>
 
                       {/* หมวด 1 ICU */}
                       <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 shadow-sm space-y-1.5">
-                        <span className="text-slate-400 font-bold block text-[11px] uppercase tracking-wider">🚨 กรณีรักษาในห้องผู้ป่วยวิกฤติ (ICU)</span>
-                        <span className="font-extrabold text-slate-800 block text-sm">
+                        <span className="text-slate-400 font-bold block text-[10px] sm:text-[11px] uppercase tracking-wider">🚨 กรณีรักษาในห้องผู้ป่วยวิกฤติ (ICU)</span>
+                        <span className="font-extrabold text-slate-800 block text-xs sm:text-sm">
                           {currentIpdPlan.icu.toLocaleString()} บ./วัน
                         </span>
-                        <span className="text-[10px] text-slate-450 block">จ่าย 2 เท่า สูงสุดไม่เกิน 15 วัน</span>
+                        <span className="text-[9px] sm:text-[10px] text-slate-450 block">จ่าย 2 เท่า สูงสุดไม่เกิน 15 วัน</span>
                       </div>
 
                       {/* หมวด 2 ค่ารักษาพยาบาลทั่วไป */}
                       <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 shadow-sm space-y-1.5">
-                        <span className="text-slate-400 font-bold block text-[11px] uppercase tracking-wider">🩺 ค่ารักษาพยาบาลทั่วไป (หมวด 2)</span>
-                        <span className="font-extrabold text-slate-800 block text-sm">
+                        <span className="text-slate-400 font-bold block text-[10px] sm:text-[11px] uppercase tracking-wider">🩺 ค่ารักษาพยาบาลทั่วไป (หมวด 2)</span>
+                        <span className="font-extrabold text-slate-800 block text-xs sm:text-sm">
                           {currentIpdPlan.medical.toLocaleString()} บ./ครั้ง
                         </span>
-                        <span className="text-[10px] text-slate-450 block">ค่าบริการวินิจฉัย/แล็บ/โลหิต/บำบัด</span>
+                        <span className="text-[9px] sm:text-[10px] text-slate-450 block">ค่าบริการวินิจฉัย/แล็บ/โลหิต/บำบัด</span>
                       </div>
 
                       {/* หมวด 3 ค่าแพทย์ตรวจรักษา */}
                       <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 shadow-sm space-y-1.5">
-                        <span className="text-slate-400 font-bold block text-[11px] uppercase tracking-wider">🩺 ค่าประกอบวิชาชีพแพทย์ตรวจ (หมวด 3)</span>
-                        <span className="font-extrabold text-slate-800 block text-sm">
+                        <span className="text-slate-400 font-bold block text-[10px] sm:text-[11px] uppercase tracking-wider">🩺 ค่าประกอบวิชาชีพแพทย์ตรวจ (หมวด 3)</span>
+                        <span className="font-extrabold text-slate-800 block text-xs sm:text-sm">
                           {currentIpdPlan.doctor.toLocaleString()} บ./วัน
                         </span>
-                        <span className="text-[10px] text-slate-450 block">ตรวจรักษาผู้ป่วยใน สูงสุด 60 วัน</span>
+                        <span className="text-[9px] sm:text-[10px] text-slate-450 block">ตรวจรักษาผู้ป่วยใน สูงสุด 60 วัน</span>
                       </div>
 
                       {/* หมวด 4 ค่าผ่าตัด */}
                       <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 shadow-sm space-y-1.5">
-                        <span className="text-slate-400 font-bold block text-[11px] uppercase tracking-wider">🔪 ค่าผ่าตัดและหัตถการ (หมวด 4)</span>
-                        <span className="font-extrabold text-slate-800 block text-sm">
+                        <span className="text-slate-400 font-bold block text-[10px] sm:text-[11px] uppercase tracking-wider">🔪 ค่าผ่าตัดและหัตถการ (หมวด 4)</span>
+                        <span className="font-extrabold text-slate-800 block text-xs sm:text-sm">
                           {currentIpdPlan.surgery.toLocaleString()} บ./ครั้ง
                         </span>
-                        <span className="text-[10px] text-slate-450 block">ผ่าตัดใหญ่และ Day Surgery (ไม่ต้องค้างคืน)</span>
+                        <span className="text-[9px] sm:text-[10px] text-slate-450 block">ผ่าตัดใหญ่และ Day Surgery (ไม่ต้องค้างคืน)</span>
                       </div>
 
                       {/* หมวด 4.5 ค่ารักษาผ่าตัดเปลี่ยนอวัยวะ */}
                       <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 shadow-sm space-y-1.5">
-                        <span className="text-slate-400 font-bold block text-[11px] uppercase tracking-wider">🔄 ค่าผ่าตัดเปลี่ยนอวัยวะ (หมวด 4.5)</span>
-                        <span className="font-extrabold text-slate-800 block text-sm">
+                        <span className="text-slate-400 font-bold block text-[10px] sm:text-[11px] uppercase tracking-wider">🔄 ค่าผ่าตัดเปลี่ยนอวัยวะ (หมวด 4.5)</span>
+                        <span className="font-extrabold text-slate-800 block text-xs sm:text-sm">
                           {(currentIpdPlan.surgery * 2).toLocaleString()} บ./ครั้ง
                         </span>
-                        <span className="text-[10px] text-slate-455 block">จ่าย 2 เท่า ของผลประโยชน์การผ่าตัด</span>
+                        <span className="text-[9px] sm:text-[10px] text-slate-455 block">จ่าย 2 เท่า ของผลประโยชน์การผ่าตัด</span>
                       </div>
 
                       {/* หมวด 7 ค่าอุบัติเหตุฉุกเฉิน OPD */}
                       <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 shadow-sm space-y-1.5">
-                        <span className="text-slate-400 font-bold block text-[11px] uppercase tracking-wider">🩹 อุบัติเหตุฉุกเฉิน OPD 24 ชม. (หมวด 7)</span>
-                        <span className="font-extrabold text-slate-800 block text-sm">
+                        <span className="text-slate-400 font-bold block text-[10px] sm:text-[11px] uppercase tracking-wider">🩹 อุบัติเหตุฉุกเฉิน OPD 24 ชม. (หมวด 7)</span>
+                        <span className="font-extrabold text-slate-800 block text-xs sm:text-sm">
                           {currentIpdPlan.accident.toLocaleString()} บ./ครั้ง
                         </span>
-                        <span className="text-[10px] text-slate-450 block">สำหรับการรักษาภายใน 24 ชม. หลังอุบัติเหตุ</span>
+                        <span className="text-[9px] sm:text-[10px] text-slate-450 block">สำหรับการรักษาภายใน 24 ชม. หลังอุบัติเหตุ</span>
                       </div>
 
                       {/* หมวด 12 ค่าบริการรถพยาบาลฉุกเฉิน */}
                       <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 shadow-sm space-y-1.5">
-                        <span className="text-slate-400 font-bold block text-[11px] uppercase tracking-wider">🚑 ค่ารถพยาบาลฉุกเฉิน (หมวด 12)</span>
-                        <span className="font-extrabold text-slate-800 block text-sm">
+                        <span className="text-slate-400 font-bold block text-[10px] sm:text-[11px] uppercase tracking-wider">🚑 ค่ารถพยาบาลฉุกเฉิน (หมวด 12)</span>
+                        <span className="font-extrabold text-slate-800 block text-xs sm:text-sm">
                           {currentIpdPlan.ambulance.toLocaleString()} บ./ครั้ง
                         </span>
-                        <span className="text-[10px] text-slate-450 block">รถพยาบาลฉุกเฉินส่งตัวรับการรักษา</span>
+                        <span className="text-[9px] sm:text-[10px] text-slate-450 block">รถพยาบาลฉุกเฉินส่งตัวรับการรักษา</span>
                       </div>
                     </div>
 
                     {/* อบ. 2 ประกันอุบัติเหตุ */}
-                    <div className="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm text-sm mt-3">
+                    <div className="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm text-xs sm:text-sm mt-3">
                       <span className="text-slate-500 font-semibold flex items-center gap-1.5">
                         🎗️ ประกันภัยอุบัติเหตุส่วนบุคคล (อบ. 2):
                       </span>
                       <span className="font-extrabold text-slate-800">
-                        100,000 บาท <span className="text-[11px] text-slate-450 font-normal">(กรณีเสียชีวิต/สูญเสียอวัยวะ)</span>
+                        100,000 บาท <span className="text-[10px] sm:text-[11px] text-slate-450 font-normal">(กรณีเสียชีวิต/สูญเสียอวัยวะ)</span>
                       </span>
                     </div>
 
                     {/* OPD Option Add-on details if buyOpd is active */}
                     {buyOpd ? (
                       <div className="bg-emerald-50/50 p-5 rounded-2xl border border-emerald-100 space-y-3 animate-fadeIn">
-                        <span className="text-[11px] text-emerald-700 font-bold uppercase tracking-wider block">
+                        <span className="text-[10px] sm:text-[11px] text-emerald-700 font-bold uppercase tracking-wider block">
                           🩹 ความคุ้มครองผู้ป่วยนอกเสริม (OPD): {currentOpdPlan.name}
                         </span>
                         <div className="flex justify-between items-center">
                           <span className="text-slate-600 font-semibold">วงเงินรักษาผู้ป่วยนอก:</span>
-                          <span className="font-extrabold text-emerald-600 text-lg">
+                          <span className="font-extrabold text-emerald-600 text-base sm:text-lg">
                             {currentOpdPlan.dailyLimit.toLocaleString()} บาท/ครั้ง
                           </span>
                         </div>
-                        <div className="flex justify-between text-[11px] text-slate-450">
+                        <div className="flex justify-between text-[10px] sm:text-[11px] text-slate-450">
                           <span>สูงสุด 30 ครั้งต่อปี (วงเงินรวม {currentOpdPlan.yearlyLimit.toLocaleString()} บ.)</span>
                           <span>แล็บ/เอ็กซเรย์: {currentOpdPlan.labLimit.toLocaleString()} บ./ปี</span>
                         </div>
                       </div>
                     ) : (
-                      <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-200/40 text-center text-[11px] text-slate-400 font-semibold">
+                      <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-200/40 text-center text-[10px] sm:text-[11px] text-slate-400 font-semibold">
                         💡 คุณสามารถเปิดสวิตช์ &quot;ซื้อแผนผู้ป่วยนอก (OPD) เสริม&quot; ฝั่งซ้าย เพื่อรับความคุ้มครอง OPD เพิ่มเติมได้
                       </div>
                     )}
@@ -584,16 +535,16 @@ export default function Home() {
                   {/* Calculated Premium Summary & CTA */}
                   <div className="pt-6 border-t border-slate-150 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
-                      <p className="text-[11px] text-slate-500 font-medium">เบี้ยประกันภัยรายปีรวม</p>
-                      <p className="text-3xl font-black text-primary">
+                      <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium">เบี้ยประกันภัยรายปีรวม</p>
+                      <p className="text-2xl sm:text-3xl font-black text-primary">
                         {totalPremium.toLocaleString()} <span className="text-xs font-normal text-slate-800">บาท/ปี</span>
                       </p>
                     </div>
                     <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                       <button
                         onClick={handleDownloadPDF}
-                        disabled={!isEligible || isDownloadingPdf}
-                        className="w-full sm:w-auto px-5 py-3 rounded-xl font-bold text-sm bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition-all flex items-center justify-center gap-1.5 shadow-sm hover:scale-102 cursor-pointer disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed"
+                        disabled={isDownloadingPdf}
+                        className="w-full sm:w-auto px-5 py-3 rounded-xl font-bold text-xs sm:text-sm bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition-all flex items-center justify-center gap-1.5 shadow-sm hover:scale-102 cursor-pointer disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed"
                       >
                         {isDownloadingPdf ? (
                           <>
@@ -608,17 +559,13 @@ export default function Home() {
                             <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            ดาวน์โหลดใบเสนอราคา (PDF)
+                            ใบเสนอราคา (PDF)
                           </>
                         )}
                       </button>
                       <button
                         onClick={handleBuyClick}
-                        disabled={!isEligible}
-                        className={`w-full sm:w-auto px-8 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-1.5 ${isEligible
-                            ? "bg-primary hover:bg-primary-hover text-white shadow-lg shadow-primary/25 hover:scale-102 cursor-pointer"
-                            : "bg-slate-100 text-slate-400 cursor-not-allowed"
-                          }`}
+                        className="w-full sm:w-auto px-8 py-3 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-primary hover:bg-primary-hover text-white shadow-lg shadow-primary/25 hover:scale-102 cursor-pointer"
                       >
                         ซื้อประกันเลย
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -627,11 +574,6 @@ export default function Home() {
                       </button>
                     </div>
                   </div>
-                  {!isEligible && (
-                    <p className="text-center text-[10px] text-red-500 font-semibold animate-pulse">
-                      *ไม่สามารถสมัครได้ เนื่องจากประวัติ COVID-19 ยังรักษาหายไม่ครบ 6 เดือน
-                    </p>
-                  )}
                 </div>
               </div>
             </div>
@@ -639,7 +581,7 @@ export default function Home() {
         </section>
 
         {/* Benefits Tables Section */}
-        <section className="pt-4 pb-8 px-6 max-w-[1600px] mx-auto print:hidden">
+        <section className="w-full min-w-0 pt-4 pb-8 px-4 sm:px-6 lg:px-16 xl:px-20 max-w-[1200px] mx-auto print:hidden">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-bold text-slate-900 mb-2">ตารางผลประโยชน์ความคุ้มครอง</h3>
             <p className="text-sm text-slate-500 font-medium">เปรียบเทียบผลประโยชน์ความคุ้มครองในแต่ละแผนอย่างละเอียด</p>
@@ -650,7 +592,7 @@ export default function Home() {
             <div className="bg-slate-100 p-1.5 rounded-2xl flex gap-1 shadow-sm">
               <button
                 onClick={() => setActiveTableTab("ipd")}
-                className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTableTab === "ipd"
+                className={`px-3 sm:px-6 py-2.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${activeTableTab === "ipd"
                     ? "bg-primary text-white shadow-md shadow-primary/15"
                     : "text-slate-600 hover:text-primary"
                   }`}
@@ -659,7 +601,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setActiveTableTab("opd")}
-                className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTableTab === "opd"
+                className={`px-3 sm:px-6 py-2.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${activeTableTab === "opd"
                     ? "bg-primary text-white shadow-md shadow-primary/15"
                     : "text-slate-600 hover:text-primary"
                   }`}
@@ -944,13 +886,13 @@ export default function Home() {
         </section>
 
         {/* Information Tabs Section (เงื่อนไข, ข้อยกเว้น, การสมัคร) */}
-        <section className="pt-4 pb-8 px-6 max-w-[1600px] mx-auto border-t border-slate-200 print:hidden">
+        <section className="w-full min-w-0 pt-4 pb-8 px-4 sm:px-6 lg:px-16 xl:px-20 max-w-[1200px] mx-auto border-t border-slate-200 print:hidden">
           <div className="bg-white rounded-3xl border border-slate-200/60 shadow-md overflow-hidden">
             {/* Tab Headers */}
             <div className="grid grid-cols-3 bg-slate-50 border-b border-slate-100">
               <button
                 onClick={() => setActiveInfoTab("notes")}
-                className={`py-4 px-2 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer ${activeInfoTab === "notes"
+                className={`py-3 sm:py-4 px-1 sm:px-2 text-[10px] sm:text-xs md:text-sm font-bold border-b-2 transition-all cursor-pointer ${activeInfoTab === "notes"
                     ? "border-primary text-primary bg-white"
                     : "border-transparent text-slate-500 hover:text-slate-700"
                   }`}
@@ -959,7 +901,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setActiveInfoTab("exclusions")}
-                className={`py-4 px-2 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer ${activeInfoTab === "exclusions"
+                className={`py-3 sm:py-4 px-1 sm:px-2 text-[10px] sm:text-xs md:text-sm font-bold border-b-2 transition-all cursor-pointer ${activeInfoTab === "exclusions"
                     ? "border-primary text-primary bg-white"
                     : "border-transparent text-slate-500 hover:text-slate-700"
                   }`}
@@ -968,7 +910,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setActiveInfoTab("apply")}
-                className={`py-4 px-2 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer ${activeInfoTab === "apply"
+                className={`py-3 sm:py-4 px-1 sm:px-2 text-[10px] sm:text-xs md:text-sm font-bold border-b-2 transition-all cursor-pointer ${activeInfoTab === "apply"
                     ? "border-primary text-primary bg-white"
                     : "border-transparent text-slate-500 hover:text-slate-700"
                   }`}
@@ -987,9 +929,8 @@ export default function Home() {
                     <li><strong>อายุที่รับประกัน</strong>: สมัครทำประกันภัยปีแรกได้ตั้งแต่วันที่อายุ <strong>15 วัน ถึง 70 ปีบริบูรณ์</strong> และสามารถต่ออายุได้ยาวนานถึง <strong>85 ปีบริบูรณ์</strong> ทั้งสำหรับแผนผู้ป่วยใน (IPD) และแผนผู้ป่วยนอก (OPD)</li>
                     <li><strong>การซื้อเพิ่มเติม</strong>: ต้องซื้อแผนผู้ป่วยในก่อน จึงจะสามารถซื้อแผนผู้ป่วยนอกเพิ่มเติมได้ (ผู้ป่วยนอกไม่ขายแยกเดี่ยวๆ) โดยเบี้ยประกันสุขภาพรับชำระเป็น <strong>รายปี</strong> เท่านั้น</li>
                     <li>เบี้ยประกันสำหรับปีต่ออายุจะถูกปรับตามอายุที่เพิ่มขึ้นของผู้เอาประกันภัย และอาจถูกปรับขึ้นตามประวัติการรับประกันของปีกรมธรรม์ก่อนหน้า (สูงสุดไม่เกิน 100% ของเบี้ยประกันมาตรฐาน)</li>
-                    <li><span className="text-emerald-600 font-bold">ส่วนลดพิเศษประวัติดี 10%</span> ในปีต่ออายุ กรณีที่ไม่มีการเรียกร้องสินไหม (เคลม) ในปีกรมธรรม์ก่อนหน้า</li>
-                    <li className="text-amber-600 font-bold">**** ในกรณีที่เคยเจ็บป่วยด้วยโรคโควิด-19 (COVID-19) มาก่อน จะต้องรักษาหายดีแล้วเป็นเวลาอย่างน้อย 6 เดือนขึ้นไป จึงจะสามารถสมัครขอเอาประกันภัยได้</li>
-                  </ul>
+                    <li className="text-emerald-600 font-bold">ส่วนลดพิเศษประวัติดี 10% ในปีต่ออายุ กรณีที่ไม่มีการเรียกร้องสินไหม (เคลม) ในปีกรมธรรม์ก่อนหน้า</li>
+                    </ul>
                 </div>
               )}
 
@@ -1123,8 +1064,8 @@ export default function Home() {
         )}
 
         {/* Footer (ปรับเป็น Light Theme สีเทาอ่อน เพื่อคุมโทนให้สะอาดตาและกลมกลืนกับ Header ใหม่) */}
-        <footer className="mt-auto bg-slate-100 text-slate-600 py-10 px-6 border-t border-slate-200 text-xs text-center md:text-left print:hidden">
-          <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <footer className="w-full min-w-0 mt-auto bg-slate-100 text-slate-600 py-10 px-4 sm:px-6 lg:px-16 xl:px-20 border-t border-slate-200 text-xs text-center md:text-left print:hidden">
+          <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3 text-left">
               <div className="w-8 h-8 bg-brand-dark rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0">
                 TH
@@ -1209,7 +1150,6 @@ export default function Home() {
             </div>
             <div className="space-y-1 text-right">
               <p><span className="text-slate-500 font-semibold">ข้อมูลผู้ขอเอาประกันภัย (อายุ):</span> <span className="font-bold text-primary">{age} ปี</span></p>
-              <p><span className="text-slate-500 font-semibold">ประวัติ COVID-19:</span> <span className="font-bold text-slate-800">{hadCovid === "no" ? "ไม่มีประวัติ" : `รักษาหายแล้ว ${covidMonths} เดือน`}</span></p>
               <p><span className="text-slate-500 font-semibold">สถานะการรับประกันภัย:</span> <span className="font-bold text-emerald-600">ผ่านเกณฑ์รับประกันเบื้องต้น</span></p>
             </div>
           </div>
