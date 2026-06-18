@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 // อัตราเบี้ยประกันภัย IPD แยกตามช่วงอายุ
 const IPD_PREMIUMS = {
@@ -55,8 +55,7 @@ const OPD_DETAILS = [
 ];
 
 export default function Home() {
-  const [age, setAge] = useState<number>(30);
-  const [ageRange, setAgeRange] = useState<string>("21-35");
+  const [age, setAge] = useState<number | "">(30);
   const [selectedIpd, setSelectedIpd] = useState<string>("SP3000");
   const [buyOpd, setBuyOpd] = useState<boolean>(false);
   const [selectedOpd, setSelectedOpd] = useState<string>("OPD800");
@@ -69,6 +68,33 @@ export default function Home() {
   const [currentDate, setCurrentDate] = useState<string>("");
   const [quotationNo, setQuotationNo] = useState<string>("");
   const [isDownloadingPdf, setIsDownloadingPdf] = useState<boolean>(false);
+  const [activePage, setActivePage] = useState<string>("intro");
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+
+  const sidebarMenu = [
+    { id: "intro", label: "แนะนำผลิตภัณฑ์", icon: "🏥" },
+    { id: "calculator", label: "คำนวณเบี้ยประกัน", icon: "🧮" },
+    { id: "benefits", label: "ตารางผลประโยชน์", icon: "📊" },
+    { id: "info", label: "เงื่อนไขและข้อมูล", icon: "📋" },
+  ];
+
+  // คำนวณช่วงอายุ
+  const ageRange = useMemo(() => {
+    if (age === "") return "21-35";
+    if (age <= 5) return "0-5";
+    if (age <= 10) return "6-10";
+    if (age <= 20) return "11-20";
+    if (age <= 35) return "21-35";
+    if (age <= 40) return "36-40";
+    if (age <= 45) return "41-45";
+    if (age <= 50) return "46-50";
+    if (age <= 55) return "51-55";
+    if (age <= 60) return "56-60";
+    if (age <= 65) return "61-65";
+    if (age <= 70) return "66-70";
+    if (age <= 75) return "71-75";
+    return "76-85";
+  }, [age]);
 
   useEffect(() => {
     setCurrentDate(new Date().toLocaleDateString("th-TH", {
@@ -86,7 +112,7 @@ export default function Home() {
   const handleAgeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     if (val === "") {
-      setAge("" as any);
+      setAge("");
       return;
     }
     const num = parseInt(val, 10);
@@ -98,31 +124,10 @@ export default function Home() {
   };
 
   const handleAgeBlur = () => {
-    if (age === ("" as any) || isNaN(age)) {
+    if (age === "" || isNaN(Number(age))) {
       setAge(30);
     }
   };
-
-  // คำนวณช่วงอายุเมื่ออายุเปลี่ยน
-  useEffect(() => {
-    if (age === ("" as any) || isNaN(age)) return;
-    let range = "21-35";
-    if (age <= 5) range = "0-5";
-    else if (age <= 10) range = "6-10";
-    else if (age <= 20) range = "11-20";
-    else if (age <= 35) range = "21-35";
-    else if (age <= 40) range = "36-40";
-    else if (age <= 45) range = "41-45";
-    else if (age <= 50) range = "46-50";
-    else if (age <= 55) range = "51-55";
-    else if (age <= 60) range = "56-60";
-    else if (age <= 65) range = "61-65";
-    else if (age <= 70) range = "66-70";
-    else if (age <= 75) range = "71-75";
-    else range = "76-85";
-
-    setAgeRange(range);
-  }, [age]);
 
   // จัดการตัวนับถอยหลังใน Modal
   useEffect(() => {
@@ -151,9 +156,9 @@ export default function Home() {
   };
 
   // ดึงค่าเบี้ยตามการตั้งค่าปัจจุบัน
-  // @ts-ignore
+  // @ts-expect-error - ageRange is a dynamic string that matches IPD_PREMIUMS keys
   const ipdPremium = IPD_PREMIUMS[ageRange]?.[selectedIpd] || 0;
-  // @ts-ignore
+  // @ts-expect-error - ageRange is a dynamic string that matches OPD_PREMIUMS keys
   const opdPremium = buyOpd ? (OPD_PREMIUMS[ageRange]?.[selectedOpd] || 0) : 0;
   const totalPremium = ipdPremium + opdPremium;
 
@@ -162,47 +167,98 @@ export default function Home() {
   const currentOpdPlan = OPD_DETAILS.find(o => o.code === selectedOpd) || OPD_DETAILS[0];
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-800 antialiased selection:bg-primary selection:text-white overflow-x-hidden w-full">
+    <div className="flex min-h-screen bg-slate-50 text-slate-800 antialiased selection:bg-primary selection:text-white overflow-x-hidden w-full">
+      {/* Sidebar Navigation */}
+      <aside className={`fixed top-0 left-0 h-full z-50 bg-brand-dark/95 backdrop-blur-xl shadow-2xl flex flex-col transition-all duration-300 print:hidden ${
+        isSidebarOpen ? "w-64" : "w-16"
+      }`}>
+        {/* Sidebar Toggle Button */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="w-full flex items-center justify-center py-3.5 border-b border-white/10 hover:bg-white/5 transition-colors cursor-pointer"
+        >
+          <svg className={`w-5 h-5 text-white transition-transform duration-300 ${isSidebarOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+          </svg>
+          {isSidebarOpen && <span className="ml-3 text-white text-sm font-bold">เมนูหลัก</span>}
+        </button>
+
+        {/* Menu Items */}
+        <nav className="flex-1 py-4 space-y-1 px-2">
+          {sidebarMenu.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => { setActivePage(item.id); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
+              className={`w-full flex items-center gap-3 rounded-xl transition-all duration-200 cursor-pointer group ${
+                isSidebarOpen ? "px-4 py-3" : "px-0 py-3 justify-center"
+              } ${
+                activePage === item.id
+                  ? "bg-primary text-white shadow-lg shadow-primary/30"
+                  : "text-white/70 hover:bg-white/10 hover:text-white"
+              }`}
+              title={item.label}
+            >
+              <span className={`text-lg shrink-0 transition-transform duration-200 ${
+                activePage === item.id ? "scale-110" : "group-hover:scale-110"
+              }`}>{item.icon}</span>
+              {isSidebarOpen && (
+                <span className={`text-sm font-semibold whitespace-nowrap transition-opacity duration-200 ${
+                  activePage === item.id ? "font-bold" : ""
+                }`}>{item.label}</span>
+              )}
+            </button>
+          ))}
+        </nav>
+
+        {/* Bottom Brand */}
+        <div className={`border-t border-white/10 py-4 flex items-center justify-center gap-2 ${isSidebarOpen ? "px-4" : "px-2"}`}>
+          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-brand-dark font-bold text-[10px] shrink-0">TH</div>
+          {isSidebarOpen && <span className="text-white/80 text-[11px] font-semibold">ไทยประกันสุขภาพ</span>}
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className={`flex flex-col flex-1 min-h-screen transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-16"} print:ml-0`}>
       {/* Premium Integrated Banner (รวมโลโก้และ Simply Healthy ใว้ในแถวเดียวกัน) */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-brand-dark to-[#00beff] text-white py-12 px-8 border-b border-white/10 shadow-lg print:hidden">
+      <section className="relative overflow-hidden bg-gradient-to-r from-brand-dark to-[#00beff] text-white py-6 px-8 border-b border-white/10 shadow-lg print:hidden">
         {/* Decorative background glows */}
         <div className="absolute -top-24 -left-20 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -right-20 w-80 h-80 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center md:justify-between gap-8 relative z-10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center md:justify-between gap-4 relative z-10">
           {/* Logo & Product Name Group */}
           <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left w-full md:w-auto">
             {/* Brand Logo (White version for dark background) */}
-            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-5 py-3.5 rounded-2xl border border-white/20 shadow-sm transition-all hover:bg-white/15">
+            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 shadow-sm transition-all hover:bg-white/15">
               {/* Circular Icon */}
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-brand-dark shrink-0 shadow-md">
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+              <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center text-brand-dark shrink-0 shadow-md">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z" />
                 </svg>
               </div>
               <div className="flex flex-col text-left">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-xl font-black text-white tracking-tight">ไทย</span>
-                  <span className="text-base font-bold text-white italic underline decoration-primary decoration-2 underline-offset-4">ประกันสุขภาพ</span>
+                  <span className="text-lg font-black text-white tracking-tight">ไทย</span>
+                  <span className="text-sm font-bold text-white italic underline decoration-primary decoration-2 underline-offset-4">ประกันสุขภาพ</span>
                 </div>
-                <span className="text-[9px] text-white/70 font-semibold tracking-wider -mt-1 uppercase">Thai Health Insurance</span>
+                <span className="text-[8px] text-white/70 font-semibold tracking-wider -mt-1 uppercase">Thai Health Insurance</span>
               </div>
             </div>
 
             {/* Vertical Divider (Hidden on mobile) */}
-            <div className="hidden sm:block w-px h-12 bg-white/20" />
+            <div className="hidden sm:block w-px h-10 bg-white/20" />
 
             {/* Product Title Info */}
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               <div className="flex items-center gap-3 justify-center sm:justify-start">
-                <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-white to-blue-100 bg-clip-text text-transparent">
+                <h2 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-white to-blue-100 bg-clip-text text-transparent">
                   Simply Healthy
                 </h2>
-                <span className="bg-white/20 border border-white/30 text-[11px] text-white font-bold px-2.5 py-0.5 rounded-full backdrop-blur-sm">
+                <span className="bg-white/20 border border-white/30 text-[10px] text-white font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
                   แผนยอดนิยม
                 </span>
               </div>
-              <p className="text-white/80 text-xs font-medium max-w-lg leading-relaxed">
+              <p className="text-white/80 text-[11px] font-medium max-w-lg leading-relaxed">
                 แผนประกันภัยผู้ป่วยในราคาประหยัด อุ่นใจทุกครั้งเมื่อต้องนอนโรงพยาบาล เริ่มต้นง่ายๆ คุ้มครองครอบคลุม
               </p>
             </div>
@@ -210,16 +266,16 @@ export default function Home() {
 
           {/* Right Side Info badge */}
           <div className="shrink-0 w-full md:w-auto">
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-2xl flex flex-col items-center md:items-end shadow-sm">
-              <span className="text-[10px] text-white/70 font-bold uppercase tracking-wider">แคมเปญพิเศษ</span>
-              <span className="text-lg font-black text-white mt-0.5">เบี้ยประกันภัยเริ่มต้นหลักพัน</span>
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-2xl flex flex-col items-center md:items-end shadow-sm">
+              <span className="text-[9px] text-white/70 font-bold uppercase tracking-wider">แคมเปญพิเศษ</span>
+              <span className="text-base font-black text-white mt-0.5">เบี้ยประกันภัยเริ่มต้นหลักพัน</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* ภาพประกอบแบนเนอร์แบบ Full Width */}
-      <div className="max-w-7xl mx-auto px-6 pt-12 print:hidden">
+      {activePage === "intro" && <div className="max-w-7xl mx-auto px-6 pt-6 print:hidden">
         <div className="relative w-full rounded-3xl overflow-hidden shadow-md border border-slate-200/60 group hover:shadow-lg transition-all duration-300">
           <img 
             src="/images/simply_healthy_banner.jpg" 
@@ -227,10 +283,10 @@ export default function Home() {
             className="w-full h-auto object-cover select-none transition-transform duration-500 group-hover:scale-[1.01]"
           />
         </div>
-      </div>
+      </div>}
 
       {/* Product Introduction Section */}
-      <section className="pt-8 pb-12 px-6 max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 items-stretch print:hidden">
+      {activePage === "intro" && <section className="pt-4 pb-8 px-6 max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 items-stretch print:hidden">
         {/* Left Side: Overview & Description */}
         <div className="lg:col-span-7 bg-white p-8 rounded-3xl border border-slate-200/60 shadow-sm space-y-6 flex flex-col justify-between">
           <div>
@@ -284,10 +340,10 @@ export default function Home() {
             💡 สมัครได้ตั้งแต่อายุ 15 วัน - 60 ปี (ต่ออายุต่อเนื่องได้ยาวนานสูงสุดถึง 85 ปี)
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* Calculator & Coverage Summary Section */}
-      <section className="bg-slate-100/50 border-y border-slate-200/60 py-12 px-6 print:hidden">
+      {activePage === "calculator" && <section className="bg-slate-100/50 border-y border-slate-200/60 py-8 px-6 print:hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-bold text-slate-900 mb-2">คำนวณเบี้ยประกันและแผนความคุ้มครองของคุณ</h3>
@@ -308,14 +364,14 @@ export default function Home() {
                 {/* Age Selector */}
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                    ระบุอายุของคุณ: <span className="text-primary font-bold">{age === "" || isNaN(age) ? "ระบุอายุ" : age === 0 ? "15 วัน" : `${age} ปี`}</span>
+                    ระบุอายุของคุณ: <span className="text-primary font-bold">{age === "" ? "ระบุอายุ" : age === 0 ? "15 วัน" : `${age} ปี`}</span>
                   </label>
                   <div className="flex items-center gap-4">
                     <input 
                       type="range" 
                       min="0" 
                       max="85" 
-                      value={age === "" || isNaN(age) ? 0 : age} 
+                      value={age === "" ? 0 : age} 
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAge(parseInt(e.target.value) || 0)}
                       className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-primary animate-pulse"
                     />
@@ -334,7 +390,7 @@ export default function Home() {
                       </span>
                     </div>
                   </div>
-                  {age > 70 && (
+                  {age !== "" && age > 70 && (
                     <p className="text-[11px] text-amber-600 mt-2 font-medium">
                       *สิทธิ์สำหรับต่ออายุกรมธรรม์เดิมเท่านั้น (Renewal Only)
                     </p>
@@ -405,7 +461,7 @@ export default function Home() {
                       >
                         {plan.name}
                         <span className="block text-[9px] text-slate-500 font-normal mt-0.5">
-                          {/* @ts-ignore */}
+                          {/* @ts-expect-error - ageRange indexing */}
                           {(IPD_PREMIUMS[ageRange]?.[plan.code] || 0).toLocaleString()} บ.
                         </span>
                       </button>
@@ -450,7 +506,7 @@ export default function Home() {
                         >
                           {opd.name}
                           <span className="block text-[9px] text-slate-500 font-normal mt-0.5">
-                            {/* @ts-ignore */}
+                            {/* @ts-expect-error - ageRange indexing */}
                             {(OPD_PREMIUMS[ageRange]?.[opd.code] || 0).toLocaleString()} บ.
                           </span>
                         </button>
@@ -584,7 +640,7 @@ export default function Home() {
                     </div>
                   ) : (
                     <div className="bg-slate-50/50 p-3.5 rounded-2xl border border-slate-200/40 text-center text-[10px] text-slate-400 font-semibold">
-                      💡 คุณสามารถเปิดสวิตช์ "ซื้อแผนผู้ป่วยนอก (OPD) เสริม" ฝั่งซ้าย เพื่อรับความคุ้มครอง OPD เพิ่มเติมได้
+                      💡 คุณสามารถเปิดสวิตช์ &quot;ซื้อแผนผู้ป่วยนอก (OPD) เสริม&quot; ฝั่งซ้าย เพื่อรับความคุ้มครอง OPD เพิ่มเติมได้
                     </div>
                   )}
                 </div>
@@ -645,11 +701,11 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section>}
 
 
       {/* Benefits Tables Section */}
-      <section className="pt-4 pb-12 px-6 max-w-7xl mx-auto print:hidden">
+      {activePage === "benefits" && <section className="pt-4 pb-8 px-6 max-w-7xl mx-auto print:hidden">
         <div className="text-center mb-8">
           <h3 className="text-2xl font-bold text-slate-900 mb-2">ตารางผลประโยชน์ความคุ้มครอง</h3>
           <p className="text-sm text-slate-500 font-medium">เปรียบเทียบผลประโยชน์ความคุ้มครองในแต่ละแผนอย่างละเอียด</p>
@@ -953,10 +1009,10 @@ export default function Home() {
             </table>
           </div>
         )}
-      </section>
+      </section>}
 
       {/* Information Tabs Section (เงื่อนไข, ข้อยกเว้น, การสมัคร) */}
-      <section className="pt-4 pb-12 px-6 max-w-7xl mx-auto border-t border-slate-200 print:hidden">
+      {activePage === "info" && <section className="pt-4 pb-8 px-6 max-w-7xl mx-auto border-t border-slate-200 print:hidden">
         <div className="bg-white rounded-3xl border border-slate-200/60 shadow-md overflow-hidden">
           {/* Tab Headers */}
           <div className="grid grid-cols-3 bg-slate-50 border-b border-slate-100">
@@ -1074,7 +1130,7 @@ export default function Home() {
             )}
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* Redirecting Modal */}
       {isModalOpen && (
@@ -1352,6 +1408,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      </div>{/* End Main Content Area */}
     </div>
   );
 }
