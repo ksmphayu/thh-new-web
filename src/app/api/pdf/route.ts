@@ -63,7 +63,8 @@ export async function POST(req: NextRequest) {
       `;
     }
 
-    const logoPath = path.join(process.cwd(), "public", "logoThh1.png").replace(/\\/g, "/");
+    const tempId = Math.random().toString(36).substring(7);
+    const tempLogoName = `logo-${tempId}.png`;
 
     const typstContent = `#set page(
   paper: "a4",
@@ -81,7 +82,7 @@ export async function POST(req: NextRequest) {
   columns: (1fr, auto),
   align: (left, right),
   [
-    #image("${logoPath}", height: 38pt)
+    #image("${tempLogoName}", height: 38pt)
   ],
   [
     #text(size: 16pt, weight: "bold", fill: rgb("#091e42"))[ใบเสนอราคาประกันสุขภาพ] \\
@@ -212,21 +213,32 @@ ${opdDetailsSection}
 
     // ตรวจสอบว่ามี binary ที่ดาวน์โหลดไว้หรือไม่
     if (await fs.stat(localBinPath).then(() => true).catch(() => false)) {
-      typstCmd = localBinPath;
-      // ให้สิทธิ์ executable บน Linux/macOS
+      // คัดลอก binary ไปยัง /tmp เพื่อหลีกเลี่ยงปัญหาระบบไฟล์ Read-Only ของ Vercel เมื่อต้องตั้งสิทธิ์ chmod
+      const tmpBinPath = path.join(os.tmpdir(), "typst");
       try {
-        await fs.chmod(typstCmd, 0o755);
-      } catch (chmodErr) {
-        console.warn("Failed to set executable permissions:", chmodErr);
+        await fs.copyFile(localBinPath, tmpBinPath);
+        await fs.chmod(tmpBinPath, 0o755);
+        typstCmd = tmpBinPath;
+      } catch (err) {
+        console.warn("Failed to copy/chmod typst binary to tmp:", err);
+        typstCmd = localBinPath;
       }
     } else if (await fs.stat(localBinPathExe).then(() => true).catch(() => false)) {
       typstCmd = localBinPathExe;
     }
 
     // เขียนไฟล์ชั่วคราวลงใน /tmp ของ OS
-    const tempId = Math.random().toString(36).substring(7);
     const tempTypPath = path.join(os.tmpdir(), `quote-${tempId}.typ`);
     const tempPdfPath = path.join(os.tmpdir(), `quote-${tempId}.pdf`);
+    const tempLogoPath = path.join(os.tmpdir(), tempLogoName);
+
+    // คัดลอกรูปภาพโลโก้ไปยัง /tmp เพื่อให้ Typst โหลดรูปได้โดยไม่ต้องออกนอก project root (แก้ปัญหา Sandbox ของ Typst)
+    const logoAbsolutePath = path.join(process.cwd(), "public", "logoThh1.png");
+    try {
+      await fs.copyFile(logoAbsolutePath, tempLogoPath);
+    } catch (copyLogoErr) {
+      console.warn("Failed to copy logo image to /tmp:", copyLogoErr);
+    }
 
     await fs.writeFile(tempTypPath, typstContent, "utf-8");
 
@@ -243,6 +255,10 @@ ${opdDetailsSection}
     try {
       await fs.unlink(tempTypPath);
       await fs.unlink(tempPdfPath);
+      await fs.unlink(tempLogoPath).catch(() => {});
+      if (typstCmd.startsWith(os.tmpdir()) && typstCmd !== "typst") {
+        await fs.unlink(typstCmd).catch(() => {});
+      }
     } catch (cleanupErr) {
       console.warn("Temporary files cleanup failed", cleanupErr);
     }
