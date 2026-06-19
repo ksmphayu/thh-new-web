@@ -134,15 +134,52 @@ export default function Home() {
     window.open("https://shop.thaihealth.co.th/product-purchase/product-plan?code=gxILNVEh", "_blank");
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (isDownloadingPdf) return;
     setIsDownloadingPdf(true);
-    // Use native window.print() - user can choose "Save as PDF" in the print dialog
-    setTimeout(() => {
-      window.print();
+
+    try {
+      const response = await fetch("/api/pdf", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          age,
+          selectedIpd,
+          buyOpd,
+          selectedOpd,
+          quotationNo,
+          currentDate,
+          totalPremium,
+          ipdPremium,
+          opdPremium,
+          currentIpdPlan,
+          currentOpdPlan,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate PDF");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Quotation-${quotationNo}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("PDF download failed:", error);
+      alert("ไม่สามารถดาวน์โหลดเอกสาร PDF ได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง");
+    } finally {
       setIsDownloadingPdf(false);
-    }, 100);
+    }
   };
+
 
   // ดึงค่าเบี้ยตามการตั้งค่าปัจจุบัน
   // @ts-expect-error - ageRange is a dynamic string that matches IPD_PREMIUMS keys
@@ -168,24 +205,10 @@ export default function Home() {
             {/* Logo & Product Name Group */}
             <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left w-full md:w-auto">
               {/* Brand Logo (White version for dark background) */}
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 shadow-sm transition-all hover:bg-white/15">
-                {/* Circular Icon */}
-                <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center text-brand-dark shrink-0 shadow-md">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z" />
-                  </svg>
-                </div>
-                <div className="flex flex-col text-left">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-black text-white tracking-tight">ไทย</span>
-                    <span className="text-sm font-bold text-white italic underline decoration-primary decoration-2 underline-offset-4">ประกันสุขภาพ</span>
-                  </div>
-                  <span className="text-[8px] text-white/70 font-semibold tracking-wider -mt-1 uppercase">Thai Health Insurance</span>
-                </div>
-              </div>
+              <img src="/logoThh1.png" alt="ไทยประกันสุขภาพ" className="h-14 w-auto select-none rounded-xl border border-white/10 shadow-sm" />
 
               {/* Vertical Divider (Hidden on mobile) */}
-              <div className="hidden sm:block w-px h-10 bg-white/20" />
+              <div className="hidden sm:block w-px h-14 bg-white/20" />
 
               {/* Product Title Info */}
               <div className="space-y-0.5">
@@ -552,14 +575,14 @@ export default function Home() {
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                             </svg>
-                            กำลังเจ็น PDF...
+                            กำลังดาวน์โหลด...
                           </>
                         ) : (
                           <>
                             <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            ใบเสนอราคา (PDF)
+                            ดาวน์โหลดใบเสนอราคา (PDF)
                           </>
                         )}
                       </button>
@@ -1067,8 +1090,8 @@ export default function Home() {
         <footer className="w-full min-w-0 mt-auto bg-slate-100 text-slate-600 py-10 px-4 sm:px-6 lg:px-16 xl:px-20 border-t border-slate-200 text-xs text-center md:text-left print:hidden">
           <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3 text-left">
-              <div className="w-8 h-8 bg-brand-dark rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0">
-                TH
+              <div className="w-8 h-8 overflow-hidden shrink-0">
+                <img src="/logo.png" alt="ไทยประกันสุขภาพ Icon" className="w-full h-full object-cover select-none" />
               </div>
               <div>
                 <p className="font-bold text-slate-800 text-sm">บริษัท ไทยประกันสุขภาพ จำกัด (มหาชน)</p>
@@ -1127,8 +1150,8 @@ export default function Home() {
           <div className="flex justify-between items-start border-b-2 border-brand-dark pb-4 mb-6">
             <div className="flex items-center gap-3">
               {/* Logo Mark */}
-              <div className="w-9 h-9 bg-brand-dark rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0">
-                TH
+              <div className="w-9 h-9 overflow-hidden shrink-0">
+                <img src="/logo.png" alt="ไทยประกันสุขภาพ Icon" className="w-full h-full object-cover select-none" />
               </div>
               <div className="text-left">
                 <h2 className="font-extrabold text-sm text-brand-dark tracking-tight">บริษัท ไทยประกันสุขภาพ จำกัด (มหาชน)</h2>
