@@ -3,6 +3,7 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import fs from "fs/promises";
 import path from "path";
+import os from "os";
 
 const execAsync = promisify(exec);
 
@@ -62,6 +63,8 @@ export async function POST(req: NextRequest) {
       `;
     }
 
+    const logoPath = path.join(process.cwd(), "public", "logoThh1.png").replace(/\\/g, "/");
+
     const typstContent = `#set page(
   paper: "a4",
   margin: (x: 1.5cm, y: 2cm),
@@ -71,14 +74,14 @@ export async function POST(req: NextRequest) {
     ]
   ]
 )
-#set text(font: "Loma", size: 10pt)
+#set text(font: ("Loma", "Sarabun"), size: 10pt)
 
 // Header Logo & Company Info
 #grid(
   columns: (1fr, auto),
   align: (left, right),
   [
-    #image("public/logoThh1.png", height: 38pt)
+    #image("${logoPath}", height: 38pt)
   ],
   [
     #text(size: 16pt, weight: "bold", fill: rgb("#091e42"))[ใบเสนอราคาประกันสุขภาพ] \\
@@ -202,15 +205,36 @@ ${opdDetailsSection}
 ]
 `;
 
-    // เขียนไฟล์ชั่วคราวลงใน /tmp
+    // ค้นหาพาธของ Typst compiler
+    let typstCmd = "typst"; // Default to system-installed typst
+    const localBinPath = path.join(process.cwd(), "bin", "typst");
+    const localBinPathExe = path.join(process.cwd(), "bin", "typst.exe");
+
+    // ตรวจสอบว่ามี binary ที่ดาวน์โหลดไว้หรือไม่
+    if (await fs.stat(localBinPath).then(() => true).catch(() => false)) {
+      typstCmd = localBinPath;
+      // ให้สิทธิ์ executable บน Linux/macOS
+      try {
+        await fs.chmod(typstCmd, 0o755);
+      } catch (chmodErr) {
+        console.warn("Failed to set executable permissions:", chmodErr);
+      }
+    } else if (await fs.stat(localBinPathExe).then(() => true).catch(() => false)) {
+      typstCmd = localBinPathExe;
+    }
+
+    // เขียนไฟล์ชั่วคราวลงใน /tmp ของ OS
     const tempId = Math.random().toString(36).substring(7);
-    const tempTypPath = path.join(process.cwd(), `quote-${tempId}.typ`);
-    const tempPdfPath = path.join(process.cwd(), `quote-${tempId}.pdf`);
+    const tempTypPath = path.join(os.tmpdir(), `quote-${tempId}.typ`);
+    const tempPdfPath = path.join(os.tmpdir(), `quote-${tempId}.pdf`);
 
     await fs.writeFile(tempTypPath, typstContent, "utf-8");
 
+    // โฟลเดอร์ฟอนต์ที่เราดาวน์โหลด Sarabun มาไว้
+    const fontsPath = path.join(process.cwd(), "fonts");
+
     // คอมไพล์ด้วย Typst
-    await execAsync(`typst compile "${tempTypPath}" "${tempPdfPath}"`);
+    await execAsync(`"${typstCmd}" compile --font-path "${fontsPath}" "${tempTypPath}" "${tempPdfPath}"`);
 
     // อ่านข้อมูลไฟล์ PDF
     const pdfBuffer = await fs.readFile(tempPdfPath);
