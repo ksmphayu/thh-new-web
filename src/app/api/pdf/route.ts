@@ -3,7 +3,6 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import fs from "fs/promises";
 import path from "path";
-import os from "os";
 
 const execAsync = promisify(exec);
 
@@ -232,10 +231,11 @@ ${opdDetailsSection}
       },
     });
 
-  } catch (error: any) {
-    console.error("Failed to generate PDF via Typst:", error);
+  } catch (error) {
+    const err = error as Error;
+    console.error("Failed to generate PDF via Typst:", err);
     return NextResponse.json(
-      { error: "Failed to generate PDF", details: error.message },
+      { error: "Failed to generate PDF", details: err.message },
       { status: 500 }
     );
   }

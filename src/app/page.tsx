@@ -86,16 +86,19 @@ export default function Home() {
   }, [age]);
 
   useEffect(() => {
-    setCurrentDate(new Date().toLocaleDateString("th-TH", {
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    }));
+    const timer = setTimeout(() => {
+      setCurrentDate(new Date().toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }));
 
-    const year = new Date().getFullYear();
-    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
-    const random = Math.floor(1000 + Math.random() * 9000);
-    setQuotationNo(`SHQ-${year}${month}-${random}`);
+      const year = new Date().getFullYear();
+      const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+      const random = Math.floor(1000 + Math.random() * 9000);
+      setQuotationNo(`SHQ-${year}${month}-${random}`);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleAgeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,7 +128,9 @@ export default function Home() {
       timer = setTimeout(() => setCountdown(countdown - 1), 1000);
     } else if (isModalOpen && countdown === 0) {
       window.open("https://shop.thaihealth.co.th/product-purchase/product-plan?code=gxILNVEh", "_blank");
-      setIsModalOpen(false);
+      setTimeout(() => {
+        setIsModalOpen(false);
+      }, 0);
     }
     return () => clearTimeout(timer);
   }, [isModalOpen, countdown]);
@@ -205,6 +210,7 @@ export default function Home() {
             {/* Logo & Product Name Group */}
             <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left w-full md:w-auto">
               {/* Brand Logo (White version for dark background) */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logoThh1.png" alt="ไทยประกันสุขภาพ" className="h-14 w-auto select-none rounded-xl border border-white/10 shadow-sm" />
 
               {/* Vertical Divider (Hidden on mobile) */}
@@ -239,6 +245,7 @@ export default function Home() {
         {/* ภาพประกอบแบนเนอร์แบบ Full Width */}
         <div className="w-full min-w-0 max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-16 xl:px-20 pt-6 print:hidden">
           <div className="relative w-full rounded-3xl overflow-hidden shadow-md border border-slate-200/60 group hover:shadow-lg transition-all duration-300">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/simply_healthy_banner.jpg"
               alt="Simply Healthy Health Insurance"
@@ -1091,6 +1098,7 @@ export default function Home() {
           <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3 text-left">
               <div className="w-8 h-8 overflow-hidden shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/logo.png" alt="ไทยประกันสุขภาพ Icon" className="w-full h-full object-cover select-none" />
               </div>
               <div>
@@ -1151,6 +1159,7 @@ export default function Home() {
             <div className="flex items-center gap-3">
               {/* Logo Mark */}
               <div className="w-9 h-9 overflow-hidden shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/logo.png" alt="ไทยประกันสุขภาพ Icon" className="w-full h-full object-cover select-none" />
               </div>
               <div className="text-left">
